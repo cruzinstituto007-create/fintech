@@ -1,0 +1,44 @@
+
+
+services:
+  mariadb_core:
+    image: mariadb:10.5
+    container_name: mariadb_fintech_core
+    environment:
+      MYSQL_ROOT_PASSWORD: rootpassword123
+      TZ: 'Europe/Madrid'
+    ports:
+      - "3306:3306"
+    volumes:
+      - mariadb_data:/var/lib/mysql
+      - ./mariadb:/docker-entrypoint-initdb.d
+    networks:
+      fintech_net:
+        ipv4_address: 172.18.0.10
+
+  postgres_analitica:
+    image: postgres:15
+    container_name: postgres_fintech_analitica
+    environment:
+      POSTGRES_PASSWORD: rootpassword123
+      POSTGRES_DB: postgres
+    ports:
+      - "5432:5432"
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+      - ./postgresql:/docker-entrypoint-initdb.d
+    networks:
+      fintech_net:
+        ipv4_address: 172.18.0.20
+
+networks:
+  fintech_net:
+    driver: bridge
+    ipam:
+      config:
+        - subnet: 172.18.0.0/16
+          gateway: 172.18.0.1
+
+volumes:
+  mariadb_data:
+  postgres_data:
